@@ -17,6 +17,7 @@ public class CardService {
     @Autowired
     private CardRepository cardRepository;
 
+
     public List<Card> getAlllCards() {
         return cardRepository.findAll();
     }
