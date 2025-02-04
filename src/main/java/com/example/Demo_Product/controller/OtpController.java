@@ -1,12 +1,15 @@
 package com.example.Demo_Product.controller;
 
 import com.example.Demo_Product.jwt.JwtTokenProvider;
+import com.example.Demo_Product.model.User;
+import com.example.Demo_Product.repo.UserRepository;
 import com.example.Demo_Product.service.OtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -19,6 +22,9 @@ public class OtpController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    UserRepository userRepository;
+
     @PostMapping("/send-otp")
     public ResponseEntity<Map<String, String>> sendOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -27,38 +33,32 @@ public class OtpController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<Map<String, String>> verifyOtp(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, String>> verifyOtp(@RequestBody Map<String, String> request) {
+        String email = request.get("email");  // Email request se lo
+        String otp = request.get("otp");
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return createErrorResponse("JWT token is missing or invalid", HttpStatus.FORBIDDEN);
+        if (email == null || email.isEmpty() || otp == null || otp.isEmpty()) {
+            return createErrorResponse("Email and OTP are required.", HttpStatus.BAD_REQUEST);
         }
 
-        String token = authorizationHeader.substring(7); // Remove "Bearer "
-
         try {
-            String email = jwtTokenProvider.getEmailFromJwt(token); // Get email from JWT
-
-            if (email == null) {
-                return createErrorResponse("Invalid JWT token", HttpStatus.FORBIDDEN);
-            }
-
-            String otp = request.get("otp");
-
             if (otpService.verifyOtp(email, otp)) {
-                return createSuccessResponse("OTP verified successfully.");
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
+                String token = otpService.generateJwtToken(user);  // JWT Token generate karein
+
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "OTP verified successfully.");
+                response.put("token", token);  // JWT Token response me bhej rahe hain
+
+                return ResponseEntity.ok(response);
             } else {
                 return createErrorResponse("Invalid or expired OTP.", HttpStatus.FORBIDDEN);
             }
         } catch (Exception e) {
-            return createErrorResponse("Invalid or expired JWT token.", HttpStatus.FORBIDDEN);
+            return createErrorResponse("Something went wrong.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private ResponseEntity<Map<String, String>> createSuccessResponse(String message) {
-        Map<String, String> response = Map.of("message", message);
-        return ResponseEntity.ok(response);
     }
 
     private ResponseEntity<Map<String, String>> createErrorResponse(String message, HttpStatus status) {

@@ -29,7 +29,7 @@ public class OtpService {
     EmailService emailService;
 
     public Map<String, String> sendOtp(String email) {
-        String otp = String.valueOf(new Random().nextInt(900000) + 100000);
+        String otp = String.valueOf(new Random().nextInt(9000) + 1000); // 4-digit OTP
 
         User user = userRepository.findByEmail(email).orElse(new User());
         user.setEmail(email);
@@ -38,29 +38,35 @@ public class OtpService {
         user.setVerified(false);
 
         userRepository.save(user);
-        emailService.sendOtpEmail(email, otp);  // Send OTP via email
+        emailService.sendOtpEmail(email, otp);  // Email OTP send
 
         Map<String, String> response = new HashMap<>();
-        response.put("email", email);
-        response.put("message", "OTP sent successfully.");
+        response.put("message", "The OTP has been sent successfully. Only valid for 5 minutes.");
         return response;
+    }
+
+
+    public String generateJwtToken(User user) {
+        return jwtTokenProvider.generateToken(user.getEmail());  // JWT Token generate karein
     }
 
     public boolean verifyOtp(String email, String otp) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Log OTP and stored OTP for debugging
-        System.out.println("Verifying OTP for email: " + email);
         System.out.println("Entered OTP: " + otp);
         System.out.println("Stored OTP: " + user.getOtp());
 
-        if (user.getOtp().equals(otp) && user.getOtpExpiry().isAfter(LocalDateTime.now())) {
-            user.setVerified(true);
-            userRepository.save(user);
-            return true;
-        } else {
+        if (user.getOtp() == null || !user.getOtp().trim().equals(otp.trim())) {
             return false;
         }
+
+        if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+
+        user.setVerified(true);
+        userRepository.save(user);
+        return true;
     }
 }
