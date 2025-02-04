@@ -57,16 +57,24 @@ public class OtpService {
         System.out.println("Entered OTP: " + otp);
         System.out.println("Stored OTP: " + user.getOtp());
 
+        // Check if OTP is correct
         if (user.getOtp() == null || !user.getOtp().trim().equals(otp.trim())) {
             return false;
         }
 
+        // Check if OTP is expired
         if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
             return false;
         }
 
+        // ✅ OTP is verified, now remove OTP and expiry from database
         user.setVerified(true);
-        userRepository.save(user);
+        user.setOtp(null);  // Remove OTP from DB
+        user.setOtpExpiry(null);  // Remove OTP expiry from DB
+
+        userRepository.save(user);  // Save user without OTP
+
         return true;
     }
+
 }
