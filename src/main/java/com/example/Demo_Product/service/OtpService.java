@@ -30,20 +30,34 @@ public class OtpService {
     private EmailService emailService;
 
     public ResponseDTO registerUser(User user) {
-        // Full name is set by combining first and last names
-        user.setName(user.getFirstName() + " " + user.getLastName());
-        userRepository.save(user);
-
-        // Create the ResponseDTO
         ResponseDTO response = new ResponseDTO();
-        response.setSuccess(true);
-        response.setMessage("User registered successfully");
 
-        // You can leave the data part null or create an empty DataDTO if needed
-        response.setData(null); // Or set an empty DataDTO if you prefer
+        try {
+            // Check if the email already exists
+            if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+                response.setSuccess(false);
+                response.setMessage("Email is already registered.");
+                response.setData(null);
+                return response;
+            }
 
-        return response;
+            // Set full name by combining first and last names
+            user.setName(user.getFirstName() + " " + user.getLastName());
+            userRepository.save(user);
+
+            response.setSuccess(true);
+            response.setMessage("User registered successfully.");
+            response.setData(null);
+            return response;
+
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage("An error occurred while registering the user: " + e.getMessage());
+            response.setData(null);
+            return response;
+        }
     }
+
 
 
     // Method to send OTP

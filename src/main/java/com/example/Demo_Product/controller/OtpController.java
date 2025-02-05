@@ -1,4 +1,3 @@
-// OtpController.java
 package com.example.Demo_Product.controller;
 
 import com.example.Demo_Product.jwt.JwtTokenProvider;
@@ -17,7 +16,7 @@ import java.util.Map;
 public class OtpController {
 
     @Autowired
-    private OtpService otpService;
+    OtpService otpService;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -27,9 +26,24 @@ public class OtpController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> registerUser(@RequestBody User user) {
-        ResponseDTO response = otpService.registerUser(user); // Now it's ResponseDTO
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        try {
+            ResponseDTO response = otpService.registerUser(user);
+
+            if (!response.isSuccess()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            ResponseDTO errorResponse = new ResponseDTO();
+            errorResponse.setSuccess(false);
+            errorResponse.setMessage("Internal server error: " + e.getMessage());
+            errorResponse.setData(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
+
 
 
     @PostMapping("/send-otp")
@@ -54,7 +68,7 @@ public class OtpController {
                 User user = userRepository.findByEmail(email)
                         .orElseThrow(() -> new RuntimeException("User not found"));
 
-                String token = otpService.generateJwtToken(user); // Generate JWT token
+                String access_token = otpService.generateJwtToken(user); // Generate JWT token
                 long expiresIn = 600; // Token expiry time in seconds (10 minutes)
 
                 // Prepare the response using DTOs
@@ -72,7 +86,7 @@ public class OtpController {
 
                 // Set Token Data
                 TokenDTO tokenData = new TokenDTO();
-                tokenData.setToken(token);
+                tokenData.setAccess_token(access_token);
                 tokenData.setTokenType("bearer");
                 tokenData.setExpiresIn(expiresIn);
 
