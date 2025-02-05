@@ -19,7 +19,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())  // Disable CSRF (Cross-Site Request Forgery)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/send-otp","/auth/verify-otp","/api/cards","/api/cards/formal").permitAll()  // Allow OTP APIs without authentication
+                        .requestMatchers("/auth/send-otp","/auth/verify-otp","/api/cards","/api/cards/formal","/auth/register").permitAll()  // Allow OTP APIs without authentication
                         .anyRequest().authenticated()
                 );
 

@@ -1,4 +1,3 @@
-
 package com.example.Demo_Product.model;
 
 import jakarta.persistence.*;
@@ -24,17 +23,28 @@ public class User {
     @Column(name = "verified")
     private boolean verified;
 
+    @Column(name = "first_name")  // Added first name
+    private String firstName;
+
+    @Column(name = "last_name")  // Added last name
+    private String lastName;
+
+    @Transient  // Added a transient field for full name (not persisted in DB)
+    private String name;
+
     // Default Constructor
     public User() {
     }
 
     // Constructor with fields
-    public User(Long id, String email, String otp, LocalDateTime otpExpiry, boolean verified) {
+    public User(Long id, String email, String otp, LocalDateTime otpExpiry, boolean verified, String firstName, String lastName) {
         this.id = id;
         this.email = email;
         this.otp = otp;
         this.otpExpiry = otpExpiry;
         this.verified = verified;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     // Getter and Setter methods
@@ -76,5 +86,30 @@ public class User {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getName() {
+        // Combining first and last name into full name
+        return this.firstName + " " + this.lastName;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
