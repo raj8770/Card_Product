@@ -61,4 +61,17 @@ public class CardController {
     }
 
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Card>> getCardsByTitle(@RequestParam String title) {
+        List<Card> cards = cardService.getCardsByTitle(title);
+
+        if (cards.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(cards);
+    }
+
+
+
 }

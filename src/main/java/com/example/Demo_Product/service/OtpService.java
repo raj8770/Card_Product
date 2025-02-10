@@ -29,6 +29,9 @@ public class OtpService {
     @Autowired
     private EmailService emailService;
 
+
+    // Register new User
+
     public ResponseDTO registerUser(User user) {
         ResponseDTO response = new ResponseDTO();
 
@@ -61,6 +64,7 @@ public class OtpService {
 
 
     // Method to send OTP
+
     public Map<String, String> sendOtp(String email) {
         String otp = String.valueOf(new Random().nextInt(9000) + 1000); // 4-digit OTP
 
@@ -83,6 +87,8 @@ public class OtpService {
     public String generateJwtToken(User user) {
         return jwtTokenProvider.generateToken(user.getEmail());  // JWT Token generate karein
     }
+
+
 
     // Verify OTP
     public boolean verifyOtp(String email, String otp) {

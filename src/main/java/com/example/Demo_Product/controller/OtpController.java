@@ -24,6 +24,9 @@ public class OtpController {
     @Autowired
     private UserRepository userRepository;
 
+
+    //Register new user
+
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> registerUser(@RequestBody User user) {
         try {
@@ -46,12 +49,17 @@ public class OtpController {
 
 
 
+
+    // Send otp in your register mail id
     @PostMapping("/send-otp")
     public ResponseEntity<Map<String, String>> sendOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         Map<String, String> response = otpService.sendOtp(email);
         return ResponseEntity.ok(response);
     }
+
+
+    // Verify otp in your mail
 
     @PostMapping("/verify-otp")
     public ResponseEntity<ResponseDTO> verifyOtp(@RequestBody Map<String, String> request) {

@@ -62,6 +62,9 @@ public class CardService {
     }
 
 
+    public List<Card> getCardsByTitle(String title) {
+        return cardRepository.findByTitleContainingIgnoreCase(title);
+    }
 
 
 }
