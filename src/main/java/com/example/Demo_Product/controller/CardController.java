@@ -72,6 +72,4 @@ public class CardController {
         return ResponseEntity.ok(cards);
     }
 
-
-
 }
