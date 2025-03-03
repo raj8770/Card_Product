@@ -113,4 +113,6 @@ public class OtpService {
         userRepository.save(user); // Save user with OTP removed
         return true;
     }
+
+
 }

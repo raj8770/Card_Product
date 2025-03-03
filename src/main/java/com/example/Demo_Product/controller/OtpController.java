@@ -122,4 +122,5 @@ public class OtpController {
         response.setData(null);
         return ResponseEntity.status(status).body(response);
     }
+
 }
