@@ -20,4 +20,5 @@ public class DataDTO {
     public void setToken(TokenDTO token) {
         this.token = token;
     }
+
 }
