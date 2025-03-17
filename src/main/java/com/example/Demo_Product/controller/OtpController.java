@@ -20,10 +20,10 @@ public class OtpController {
     OtpService otpService;
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
 
     //Register new user

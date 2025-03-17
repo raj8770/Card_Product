@@ -8,7 +8,9 @@ import lombok.Setter;
 @Setter
 @JsonPropertyOrder({ "id", "cardDetails" })  // Pehle ID aayega, phir details
 public class CardDTO {
+
     private Long id;
+
     private CardDetails cardDetails;
 
     public CardDTO(Long id, String title, String description, String imageUrl, Long price) {
