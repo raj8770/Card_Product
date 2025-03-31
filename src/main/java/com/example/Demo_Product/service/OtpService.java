@@ -92,6 +92,7 @@ public class OtpService {
 
 
 
+
     // Verify OTP
     public boolean verifyOtp(String email, String otp) {
         User user = userRepository.findByEmail(email)
