@@ -56,6 +56,7 @@ public class OtpService {
 
         } catch (Exception e) {
             response.setSuccess(false);
+
             response.setMessage("An error occurred while registering the user: " + e.getMessage());
             response.setData(null);
             return response;
@@ -110,9 +111,9 @@ public class OtpService {
         user.setOtp(null);
         user.setOtpExpiry(null);
 
+
         userRepository.save(user); // Save user with OTP removed
         return true;
     }
-
 
 }
