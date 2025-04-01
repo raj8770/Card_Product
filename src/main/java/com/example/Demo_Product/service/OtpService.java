@@ -117,6 +117,4 @@ public class OtpService {
         return true;
     }
 
-    
-
 }
