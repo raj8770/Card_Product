@@ -2,6 +2,7 @@ package com.example.Demo_Product.service;
 
 import com.example.Demo_Product.jwt.EmailService;
 import com.example.Demo_Product.jwt.JwtTokenProvider;
+
 import com.example.Demo_Product.model.ResponseDTO;
 
 import com.example.Demo_Product.model.User;
@@ -85,6 +86,7 @@ public class OtpService {
         return response;
     }
 
+
     // Method to generate JWT token
     public String generateJwtToken(User user) {
         return jwtTokenProvider.generateToken(user.getEmail());  // JWT Token generate karein
@@ -115,6 +117,7 @@ public class OtpService {
 
         userRepository.save(user); // Save user with OTP removed
         return true;
+
     }
 
 
