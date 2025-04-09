@@ -47,4 +47,6 @@ public class EmailService {
             // Log or notify the user about the error
         }
     }
+
+
 }

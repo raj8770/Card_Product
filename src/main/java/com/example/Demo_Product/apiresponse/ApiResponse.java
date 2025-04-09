@@ -20,3 +20,4 @@ public class ApiResponse {
         this.cardsList = cardsList; // Setter for cardsList
     }
 }
+
